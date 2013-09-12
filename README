@@ -1,0 +1,57 @@
+NAME
+    App::ListRevDeps - List reverse dependencies of a Perl module
+
+VERSION
+    version 0.01
+
+SYNOPSIS
+     # Use via list-rev-deps CLI script
+
+DESCRIPTION
+    Currently uses MetaCPAN API and also scrapes the MetaCPAN website and by
+    default caches results for 24 hours.
+
+SEE ALSO
+AUTHOR
+    Steven Haryanto <stevenharyanto@gmail.com>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2013 by Steven Haryanto.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
+FUNCTIONS
+    None are exported by default, but they are exportable.
+
+  list_rev_deps(%args) -> [status, msg, result, meta]
+    Currently skips prerequisites which are modules already in core (for
+    installed perl version).
+
+    Arguments ('*' denotes required arguments):
+
+    *   level => *int* (default: 1)
+
+        Specify how many levels up to check (-1 means unlimited).
+
+    *   module* => *array*
+
+        Perl module(s) to check.
+
+    *   raw => *bool* (default: 0)
+
+        Return raw result.
+
+    *   recursive => *bool*
+
+        Equivalent to setting level=-1.
+
+    Return value:
+
+    Returns an enveloped result (an array). First element (status) is an
+    integer containing HTTP status code (200 means OK, 4xx caller error, 5xx
+    function error). Second element (msg) is a string containing error
+    message, or 'OK' if status is 200. Third element (result) is optional,
+    the actual result. Fourth element (meta) is called result metadata and
+    is optional, a hash that contains extra information.
+

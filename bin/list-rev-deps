@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+use 5.010;
+use strict;
+use warnings;
+
+use Perinci::CmdLine;
+
+BEGIN { our $Log_Level = 'info' } # be more verbose by default
+
+our $VERSION = '0.01'; # VERSION
+
+Perinci::CmdLine->new(url => '/App/ListRevDeps/list_rev_deps')->run;
+
+# ABSTRACT: List reverse dependencies of a Perl distribution
+# PODNAME: list-rev-deps
+
+__END__
+
+=pod
+
+=encoding utf-8
+
+=head1 NAME
+
+list-rev-deps - List reverse dependencies of a Perl distribution
+
+=head1 VERSION
+
+version 0.01
+
+=head1 SYNOPSIS
+
+ % list-rev-deps Data-Clean-JSON; # or Data::Clean::JSON, will be converted to dist
+
+List reverse dependencies recursively:
+
+ % list-rev-deps -r Data-Clean-JSON
+
+Can also return raw tree structure:
+
+ % list-rev-deps --format=json -r Foo
+
+See L<App::ListRevDeps> for more details.
+
+=head1 AUTHOR
+
+Steven Haryanto <stevenharyanto@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by Steven Haryanto.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

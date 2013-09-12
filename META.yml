@@ -1,0 +1,30 @@
+---
+abstract: 'List reverse dependencies of a Perl module'
+author:
+  - 'Steven Haryanto <stevenharyanto@gmail.com>'
+build_requires:
+  Capture::Tiny: 0
+  Test::More: 0.88
+  Test::Script: 1.05
+  blib: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.30
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.132140'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: App-ListRevDeps
+requires:
+  CHI: 0.50
+  LWP::UserAgent: 0
+  Log::Any: 0
+  MetaCPAN::API: 0
+  Mojo::DOM: 0
+  Perinci::CmdLine: 0.68
+  perl: 5.010001
+resources:
+  homepage: http://metacpan.org/release/App-ListRevDeps
+  repository: http://github.com/sharyanto/perl-App-ListRevDeps
+version: 0.01
