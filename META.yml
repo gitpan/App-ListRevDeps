@@ -27,4 +27,4 @@ requires:
 resources:
   homepage: http://metacpan.org/release/App-ListRevDeps
   repository: http://github.com/sharyanto/perl-App-ListRevDeps
-version: 0.01
+version: 0.02

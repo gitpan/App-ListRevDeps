@@ -10,7 +10,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(list_prereqs);
 
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 
 $SPEC{list_rev_deps} = {
     v => 1.1,
@@ -38,6 +38,10 @@ _
             schema  => ['bool'],
             summary => 'Equivalent to setting level=-1',
             cmdline_aliases => { r => {} },
+        },
+        exclude_re => {
+            schema  => ['str*'], # XXX re
+            summary => 'Specify dist pattern to exclude',
         },
         #cache => {
         #    schema  => [bool => {default=>1}],
@@ -68,6 +72,10 @@ sub list_rev_deps {
     $maxlevel = -1 if $args{recursive};
     #my $do_cache = $args{cache} // 1;
     my $raw = $args{raw};
+    my $exclude_re = $args{exclude_re};
+    if ($exclude_re) {
+        $exclude_re = qr/$exclude_re/;
+    }
 
     # '$cache' is ambiguous between args{cache} and CHI object
     my $chi = CHI->new(driver => "File");
@@ -106,6 +114,10 @@ sub list_rev_deps {
                 my @dists;
                 for (@urls) {
                     s!^/release/!!;
+                    if ($exclude_re && $_ =~ $exclude_re) {
+                        $log->infof("Excluded dist %s", $_);
+                        next;
+                    }
                     push @dists, $_;
                 }
                 \@dists;
@@ -165,7 +177,7 @@ App::ListRevDeps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -202,6 +214,10 @@ perl version).
 Arguments ('*' denotes required arguments):
 
 =over 4
+
+=item * B<exclude_re> => I<str>
+
+Specify dist pattern to exclude.
 
 =item * B<level> => I<int> (default: 1)
 

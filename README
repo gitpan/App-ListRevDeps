@@ -2,7 +2,7 @@ NAME
     App::ListRevDeps - List reverse dependencies of a Perl module
 
 VERSION
-    version 0.01
+    version 0.02
 
 SYNOPSIS
      # Use via list-rev-deps CLI script
@@ -29,6 +29,10 @@ FUNCTIONS
     installed perl version).
 
     Arguments ('*' denotes required arguments):
+
+    *   exclude_re => *str*
+
+        Specify dist pattern to exclude.
 
     *   level => *int* (default: 1)
 
