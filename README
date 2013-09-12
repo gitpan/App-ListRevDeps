@@ -2,7 +2,7 @@ NAME
     App::ListRevDeps - List reverse dependencies of a Perl module
 
 VERSION
-    version 0.03
+    version 0.04
 
 SYNOPSIS
      # Use via list-rev-deps CLI script
@@ -45,10 +45,6 @@ FUNCTIONS
     *   raw => *bool* (default: 0)
 
         Return raw result.
-
-    *   recursive => *bool*
-
-        Equivalent to setting level=-1.
 
     Return value:
 
