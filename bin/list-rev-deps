@@ -8,7 +8,7 @@ use Perinci::CmdLine;
 
 BEGIN { our $Log_Level = 'info' } # be more verbose by default
 
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 Perinci::CmdLine->new(url => '/App/ListRevDeps/list_rev_deps')->run;
 
@@ -27,7 +27,7 @@ list-rev-deps - List reverse dependencies of a Perl distribution
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 

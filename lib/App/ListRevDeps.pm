@@ -10,7 +10,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(list_prereqs);
 
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 $SPEC{list_rev_deps} = {
     v => 1.1,
@@ -88,6 +88,7 @@ sub list_rev_deps {
     my @errs;
     my %mdist; # mentioned dist, for checking circularity
     my %mmod;  # mentioned mod
+    my %excluded; # to avoid showing skipped message multiple times
 
     my $do_list;
     $do_list = sub {
@@ -114,16 +115,16 @@ sub list_rev_deps {
                 my @dists;
                 for (@urls) {
                     s!^/release/!!;
-                    if ($exclude_re && $_ =~ $exclude_re) {
-                        $log->infof("Excluded dist %s", $_);
-                        next;
-                    }
                     push @dists, $_;
                 }
                 \@dists;
             });
 
-        for my $d (@$depdists) {
+        for my $d (sort @$depdists) {
+            if ($exclude_re && $d =~ $exclude_re) {
+                $log->infof("Excluded dist %s", $d) unless $excluded{$d}++;
+                next;
+            }
             my $res = {
                 dist => $d,
             };
@@ -148,12 +149,18 @@ sub list_rev_deps {
 
     my @res;
     for (ref($mod) eq 'ARRAY' ? @$mod : $mod) {
-        my $modinfo = $chi->compute(
-            "$cp-mod-$_", $ce, sub {
-                $log->infof("Querying MetaCPAN for module %s ...", $_);
-                $mcpan->module($_);
-            });
-        my $dist = $modinfo->{distribution};
+        my $dist;
+        # if it already looks like a dist, skip an API call
+        if (/-/) {
+            $dist = $_;
+        } else {
+            my $modinfo = $chi->compute(
+                "$cp-mod-$_", $ce, sub {
+                    $log->infof("Querying MetaCPAN for module %s ...", $_);
+                    $mcpan->module($_);
+                });
+            $dist = $modinfo->{distribution};
+        }
         push @res, $do_list->($dist);
     }
     my $res = $raw ? \@res : join("", @res);
@@ -177,7 +184,7 @@ App::ListRevDeps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
