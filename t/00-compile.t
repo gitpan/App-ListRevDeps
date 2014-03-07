@@ -1,43 +1,77 @@
+use 5.006;
 use strict;
 use warnings;
 
-# This test was generated via Dist::Zilla::Plugin::Test::Compile 2.018
+# this test was generated with Dist::Zilla::Plugin::Test::Compile 2.039
 
-use Test::More 0.88;
+use Test::More  tests => 2 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
 
 
 
-use Capture::Tiny qw{ capture };
-
-my @module_files = qw(
-App/ListRevDeps.pm
+my @module_files = (
+    'App/ListRevDeps.pm'
 );
 
-my @scripts = qw(
-bin/list-rev-deps
+my @scripts = (
+    'bin/list-rev-deps'
 );
 
 # no fake home requested
 
+my $inc_switch = -d 'blib' ? '-Mblib' : '-Ilib';
+
+use File::Spec;
+use IPC::Open3;
+use IO::Handle;
+
+open my $stdin, '<', File::Spec->devnull or die "can't open devnull: $!";
+
 my @warnings;
 for my $lib (@module_files)
 {
-    my ($stdout, $stderr, $exit) = capture {
-        system($^X, '-Mblib', '-e', qq{require q[$lib]});
-    };
+    # see L<perlfaq8/How can I capture STDERR from an external command?>
+    my $stderr = IO::Handle->new;
+
+    my $pid = open3($stdin, '>&STDERR', $stderr, $^X, $inc_switch, '-e', "require q[$lib]");
+    binmode $stderr, ':crlf' if $^O eq 'MSWin32';
+    my @_warnings = <$stderr>;
+    waitpid($pid, 0);
     is($?, 0, "$lib loaded ok");
-    warn $stderr if $stderr;
-    push @warnings, $stderr if $stderr;
+
+    if (@_warnings)
+    {
+        warn @_warnings;
+        push @warnings, @_warnings;
+    }
 }
 
-use Test::Script 1.05;
-foreach my $file ( @scripts ) {
-    script_compiles( $file, "$file compiles" );
-}
+foreach my $file (@scripts)
+{ SKIP: {
+    open my $fh, '<', $file or warn("Unable to open $file: $!"), next;
+    my $line = <$fh>;
+    close $fh and skip("$file isn't perl", 1) unless $line =~ /^#!.*?\bperl\b\s*(.*)$/;
+
+    my @flags = $1 ? split(/\s+/, $1) : ();
+
+    my $stderr = IO::Handle->new;
+
+    my $pid = open3($stdin, '>&STDERR', $stderr, $^X, $inc_switch, @flags, '-c', $file);
+    binmode $stderr, ':crlf' if $^O eq 'MSWin32';
+    my @_warnings = <$stderr>;
+    waitpid($pid, 0);
+    is($?, 0, "$file compiled ok");
+
+   # in older perls, -c output is simply the file portion of the path being tested
+    if (@_warnings = grep { !/\bsyntax OK$/ }
+        grep { chomp; $_ ne (File::Spec->splitpath($file))[2] } @_warnings)
+    {
+        warn @_warnings;
+        push @warnings, @_warnings;
+    }
+} }
+
 
 
 is(scalar(@warnings), 0, 'no warnings found') if $ENV{AUTHOR_TESTING};
 
 
-
-done_testing;

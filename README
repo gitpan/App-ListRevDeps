@@ -2,7 +2,7 @@ NAME
     App::ListRevDeps - List reverse dependencies of a Perl module
 
 VERSION
-    version 0.04
+    version 0.05
 
 SYNOPSIS
      # Use via list-rev-deps CLI script
@@ -11,24 +11,15 @@ DESCRIPTION
     Currently uses MetaCPAN API and also scrapes the MetaCPAN website and by
     default caches results for 24 hours.
 
-SEE ALSO
-AUTHOR
-    Steven Haryanto <stevenharyanto@gmail.com>
-
-COPYRIGHT AND LICENSE
-    This software is copyright (c) 2013 by Steven Haryanto.
-
-    This is free software; you can redistribute it and/or modify it under
-    the same terms as the Perl 5 programming language system itself.
-
 FUNCTIONS
-    None are exported by default, but they are exportable.
-
   list_rev_deps(%args) -> [status, msg, result, meta]
-    Currently skips prerequisites which are modules already in core (for
-    installed perl version).
+    List reverse dependencies of a Perl module.
 
     Arguments ('*' denotes required arguments):
+
+    *   cache => *bool* (default: 1)
+
+        Whether to cache API results for some time, for performance.
 
     *   exclude_re => *str*
 
@@ -54,4 +45,29 @@ FUNCTIONS
     message, or 'OK' if status is 200. Third element (result) is optional,
     the actual result. Fourth element (meta) is called result metadata and
     is optional, a hash that contains extra information.
+
+SEE ALSO
+HOMEPAGE
+    Please visit the project's homepage at
+    <https://metacpan.org/release/App-ListRevDeps>.
+
+SOURCE
+    Source repository is at
+    <https://github.com/sharyanto/perl-App-ListRevDeps>.
+
+BUGS
+    Please report any bugs or feature requests on the bugtracker website
+    <https://rt.cpan.org/Public/Dist/Display.html?Name=App-ListRevDeps>
+
+    When submitting a bug or request, please include a test-file or a patch
+    to an existing test-file that illustrates the bug or desired feature.
+
+AUTHOR
+    Steven Haryanto <stevenharyanto@gmail.com>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2014 by Steven Haryanto.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
 
