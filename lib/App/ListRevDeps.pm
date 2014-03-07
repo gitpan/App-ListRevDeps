@@ -10,7 +10,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(list_prereqs);
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 $SPEC{list_rev_deps} = {
     v => 1.1,
@@ -50,7 +50,7 @@ $SPEC{list_rev_deps} = {
         # TODO: arg to set default cache expire period
     },
 };
-sub list_rev_deps {
+{ my $meta = $App::ListRevDeps::SPEC{list_rev_deps}; $meta->{'x.perinci.sub.wrapper.log'} = [{'embed' => 1,'validate_result' => 1,'validate_args' => 1,'normalize_schema' => 1}]; $meta->{args}{'cache'}{schema} = ['bool',{'default' => 1},{}]; $meta->{args}{'exclude_re'}{schema} = ['str',{'req' => 1},{}]; $meta->{args}{'level'}{schema} = ['int',{'default' => 1},{}]; $meta->{args}{'module'}{schema} = ['array',{'req' => 1},{}]; $meta->{args}{'raw'}{schema} = ['bool',{'default' => 0},{}]; }use experimental 'smartmatch'; require Scalar::Util; sub list_rev_deps {
     require CHI;
     require LWP::UserAgent;
     require MetaCPAN::API;
@@ -60,11 +60,11 @@ sub list_rev_deps {
     state $ua = do { my $ua = LWP::UserAgent->new; $ua->env_proxy; $ua };
 
     my %args = @_;
-    # XXX schema
-    my $mod = $args{module} or return [400, "Please specify module"];
-    my $maxlevel = $args{level} // 1;
+my $_sahv_dpath = []; my $_w_res = undef; for (sort keys %args) { if (!/\A(-?)\w+(\.\w+)*\z/o) { return [400, "Invalid argument name '$_'"]; } if (!($1 || $_ ~~ ['cache','exclude_re','level','module','raw'])) { return [400, "Unknown argument '$_'"]; } } if (exists($args{'cache'})) { my $err_cache; ($args{'cache'} //= 1, 1) && (!defined($args{'cache'}) ? 1 :  ((!ref($args{'cache'})) ? 1 : (($err_cache //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type boolean value"),0))); if ($err_cache) { return [400, "Invalid value for argument 'cache': $err_cache"]; } } else { $args{'cache'} //= 1; } if (exists($args{'exclude_re'})) { my $err_exclude_re; ((defined($args{'exclude_re'})) ? 1 : (($err_exclude_re //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Required input not specified"),0)) && ((!ref($args{'exclude_re'})) ? 1 : (($err_exclude_re //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type text"),0)); if ($err_exclude_re) { return [400, "Invalid value for argument 'exclude_re': $err_exclude_re"]; } } if (exists($args{'level'})) { my $err_level; ($args{'level'} //= 1, 1) && (!defined($args{'level'}) ? 1 :  ((Scalar::Util::looks_like_number($args{'level'}) =~ /^(?:1|2|9|10|4352)$/) ? 1 : (($err_level //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type integer"),0))); if ($err_level) { return [400, "Invalid value for argument 'level': $err_level"]; } } else { $args{'level'} //= 1; } if (exists($args{'module'})) { my $err_module; ((defined($args{'module'})) ? 1 : (($err_module //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Required input not specified"),0)) && ((ref($args{'module'}) eq 'ARRAY') ? 1 : (($err_module //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type array"),0)); if ($err_module) { return [400, "Invalid value for argument 'module': $err_module"]; } } if (!exists($args{'module'})) { return [400, "Missing required argument: module"]; } if (exists($args{'raw'})) { my $err_raw; ($args{'raw'} //= 0, 1) && (!defined($args{'raw'}) ? 1 :  ((!ref($args{'raw'})) ? 1 : (($err_raw //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type boolean value"),0))); if ($err_raw) { return [400, "Invalid value for argument 'raw': $err_raw"]; } } else { $args{'raw'} //= 0; }$_w_res = do { 
+    my $mod = $args{module};
+    my $maxlevel = $args{level};
     #$maxlevel = -1 if $args{recursive};
-    my $do_cache = $args{cache} // 1;
+    my $do_cache = $args{cache};
     my $raw = $args{raw};
     my $exclude_re = $args{exclude_re};
     if ($exclude_re) {
@@ -164,7 +164,7 @@ sub list_rev_deps {
 
     [200, @errs ? "Unsatisfiable dependencies" : "OK", $res,
      {"cmdline.exit_code" => @errs ? 200:0}];
-}
+};      unless (ref($_w_res) eq "ARRAY" && $_w_res->[0]) { return [500, 'BUG: Sub App::ListRevDeps::list_rev_deps does not produce envelope']; } return $_w_res; }
 
 1;
 #ABSTRACT: List reverse dependencies of a Perl module
@@ -181,7 +181,7 @@ App::ListRevDeps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 

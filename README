@@ -2,7 +2,7 @@ NAME
     App::ListRevDeps - List reverse dependencies of a Perl module
 
 VERSION
-    version 0.06
+    version 0.07
 
 SYNOPSIS
      # Use via list-rev-deps CLI script

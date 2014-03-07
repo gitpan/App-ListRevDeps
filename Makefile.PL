@@ -28,7 +28,8 @@ my %WriteMakefileArgs = (
     "Log::Any" => 0,
     "MetaCPAN::API" => 0,
     "Mojo::DOM" => 0,
-    "Perinci::CmdLine" => "0.68"
+    "Perinci::CmdLine" => "0.68",
+    "experimental" => 0
   },
   "TEST_REQUIRES" => {
     "File::Spec" => 0,
@@ -36,7 +37,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.06",
+  "VERSION" => "0.07",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -53,7 +54,8 @@ my %FallbackPrereqs = (
   "MetaCPAN::API" => 0,
   "Mojo::DOM" => 0,
   "Perinci::CmdLine" => "0.68",
-  "Test::More" => 0
+  "Test::More" => 0,
+  "experimental" => 0
 );
 
 
