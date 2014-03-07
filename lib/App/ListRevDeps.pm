@@ -10,7 +10,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(list_prereqs);
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 $SPEC{list_rev_deps} = {
     v => 1.1,
@@ -103,7 +103,7 @@ sub list_rev_deps {
                 $log->infof("Querying MetaCPAN for dist %s ...", $dist);
                 my $url = "https://metacpan.org/requires/distribution/$dist";
                 my $res = $ua->get($url);
-                $log->tracef("API result: %s", $res);
+                if ($ENV{LOG_API_RESPONSE}) { $log->tracef("API result: %s", $res) }
                 die "Can't get $url: " . $res->status_line unless $res->is_success;
                 my $dom = Mojo::DOM->new($res->content);
                 my @urls = $dom->find(".table-releases td.name a[href]")->pluck(attr=>"href")->each;
@@ -153,7 +153,7 @@ sub list_rev_deps {
                 "$cp-mod-$_", $ce, sub {
                     $log->infof("Querying MetaCPAN for module %s ...", $_);
                     my $res = $mcpan->module($_);
-                    $log->tracef("API result: %s", $res);
+                    if ($ENV{LOG_API_RESPONSE}) { $log->tracef("API result: %s", $res) }
                     $res;
                 });
             $dist = $modinfo->{distribution};
@@ -181,7 +181,7 @@ App::ListRevDeps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
@@ -228,6 +228,16 @@ Return raw result.
 Return value:
 
 Returns an enveloped result (an array). First element (status) is an integer containing HTTP status code (200 means OK, 4xx caller error, 5xx function error). Second element (msg) is a string containing error message, or 'OK' if status is 200. Third element (result) is optional, the actual result. Fourth element (meta) is called result metadata and is optional, a hash that contains extra information.
+
+=head1 ENVIRONMENT
+
+=over
+
+=item * LOG_API_RESPONSE (bool)
+
+If enabled, will log raw API response (at trace level).
+
+=back
 
 =head1 SEE ALSO
 

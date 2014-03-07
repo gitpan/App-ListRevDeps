@@ -28,7 +28,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=App-ListRevDeps
   homepage: https://metacpan.org/release/App-ListRevDeps
   repository: git://github.com/sharyanto/perl-App-ListRevDeps.git
-version: '0.05'
+version: '0.06'
 x_Dist_Zilla:
   perl:
     version: '5.018002'

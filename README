@@ -2,7 +2,7 @@ NAME
     App::ListRevDeps - List reverse dependencies of a Perl module
 
 VERSION
-    version 0.05
+    version 0.06
 
 SYNOPSIS
      # Use via list-rev-deps CLI script
@@ -45,6 +45,11 @@ FUNCTIONS
     message, or 'OK' if status is 200. Third element (result) is optional,
     the actual result. Fourth element (meta) is called result metadata and
     is optional, a hash that contains extra information.
+
+ENVIRONMENT
+    *   LOG_API_RESPONSE (bool)
+
+        If enabled, will log raw API response (at trace level).
 
 SEE ALSO
 HOMEPAGE
