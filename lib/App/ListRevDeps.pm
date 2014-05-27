@@ -10,7 +10,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(list_prereqs);
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 $SPEC{list_rev_deps} = {
     v => 1.1,
@@ -50,17 +50,13 @@ $SPEC{list_rev_deps} = {
         # TODO: arg to set default cache expire period
     },
 };
-{ my $meta = $App::ListRevDeps::SPEC{list_rev_deps}; $meta->{'x.perinci.sub.wrapper.log'} = [{'embed' => 1,'validate_result' => 1,'validate_args' => 1,'normalize_schema' => 1}]; $meta->{args}{'cache'}{schema} = ['bool',{'default' => 1},{}]; $meta->{args}{'exclude_re'}{schema} = ['str',{'req' => 1},{}]; $meta->{args}{'level'}{schema} = ['int',{'default' => 1},{}]; $meta->{args}{'module'}{schema} = ['array',{'req' => 1},{}]; $meta->{args}{'raw'}{schema} = ['bool',{'default' => 0},{}]; }use experimental 'smartmatch'; require Scalar::Util; sub list_rev_deps {
+sub list_rev_deps {
     require CHI;
-    require LWP::UserAgent;
-    require MetaCPAN::API;
-    require Mojo::DOM;
+    require MetaCPAN::Client;
     require Module::CoreList;
 
-    state $ua = do { my $ua = LWP::UserAgent->new; $ua->env_proxy; $ua };
-
     my %args = @_;
-my $_sahv_dpath = []; my $_w_res = undef; for (sort keys %args) { if (!/\A(-?)\w+(\.\w+)*\z/o) { return [400, "Invalid argument name '$_'"]; } if (!($1 || $_ ~~ ['cache','exclude_re','level','module','raw'])) { return [400, "Unknown argument '$_'"]; } } if (exists($args{'cache'})) { my $err_cache; ($args{'cache'} //= 1, 1) && (!defined($args{'cache'}) ? 1 :  ((!ref($args{'cache'})) ? 1 : (($err_cache //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type boolean value"),0))); if ($err_cache) { return [400, "Invalid value for argument 'cache': $err_cache"]; } } else { $args{'cache'} //= 1; } if (exists($args{'exclude_re'})) { my $err_exclude_re; ((defined($args{'exclude_re'})) ? 1 : (($err_exclude_re //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Required input not specified"),0)) && ((!ref($args{'exclude_re'})) ? 1 : (($err_exclude_re //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type text"),0)); if ($err_exclude_re) { return [400, "Invalid value for argument 'exclude_re': $err_exclude_re"]; } } if (exists($args{'level'})) { my $err_level; ($args{'level'} //= 1, 1) && (!defined($args{'level'}) ? 1 :  ((Scalar::Util::looks_like_number($args{'level'}) =~ /^(?:1|2|9|10|4352)$/) ? 1 : (($err_level //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type integer"),0))); if ($err_level) { return [400, "Invalid value for argument 'level': $err_level"]; } } else { $args{'level'} //= 1; } if (exists($args{'module'})) { my $err_module; ((defined($args{'module'})) ? 1 : (($err_module //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Required input not specified"),0)) && ((ref($args{'module'}) eq 'ARRAY') ? 1 : (($err_module //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type array"),0)); if ($err_module) { return [400, "Invalid value for argument 'module': $err_module"]; } } if (!exists($args{'module'})) { return [400, "Missing required argument: module"]; } if (exists($args{'raw'})) { my $err_raw; ($args{'raw'} //= 0, 1) && (!defined($args{'raw'}) ? 1 :  ((!ref($args{'raw'})) ? 1 : (($err_raw //= (@$_sahv_dpath ? '@'.join("/",@$_sahv_dpath).": " : "") . "Input is not of type boolean value"),0))); if ($err_raw) { return [400, "Invalid value for argument 'raw': $err_raw"]; } } else { $args{'raw'} //= 0; }$_w_res = do { 
+
     my $mod = $args{module};
     my $maxlevel = $args{level};
     #$maxlevel = -1 if $args{recursive};
@@ -74,7 +70,7 @@ my $_sahv_dpath = []; my $_w_res = undef; for (sort keys %args) { if (!/\A(-?)\w
     # '$cache' is ambiguous between args{cache} and CHI object
     my $chi = CHI->new(driver => $do_cache ? "File" : "Null");
 
-    my $mcpan = MetaCPAN::API->new;
+    my $mcpan = MetaCPAN::Client->new;
 
     my $cp = "list_rev_deps"; # cache prefix
     my $ce = "24h"; # cache expire period
@@ -97,34 +93,27 @@ my $_sahv_dpath = []; my $_w_res = undef; for (sort keys %args) { if (!/\A(-?)\w
             return ();
         }
 
-        # list dists which depends on $dist
+        # list dists which depends on $dist. XXX we should switch to using the
+        # API function instead, see CPAN::ReverseDependencies.
         my $depdists = $chi->compute(
             "$cp-dist-$dist", $ce, sub {
                 $log->infof("Querying MetaCPAN for dist %s ...", $dist);
-                my $url = "https://metacpan.org/requires/distribution/$dist";
-                my $res = $ua->get($url);
+                my $res = $mcpan->rev_deps($dist);
                 if ($ENV{LOG_API_RESPONSE}) { $log->tracef("API result: %s", $res) }
-                die "Can't get $url: " . $res->status_line unless $res->is_success;
-                my $dom = Mojo::DOM->new($res->content);
-                my @urls = $dom->find(".table-releases td.name a[href]")->pluck(attr=>"href")->each;
-                my @dists;
-                for (@urls) {
-                    s!^/release/!!;
-                    push @dists, $_;
-                }
-                \@dists;
+                $res;
             });
 
         for my $d (sort @$depdists) {
-            if ($exclude_re && $d =~ $exclude_re) {
-                $log->infof("Excluded dist %s", $d) unless $excluded{$d}++;
+            if ($exclude_re && $d->name =~ $exclude_re) {
+                $log->infof("Excluded dist %s", $d->name)
+                    unless $excluded{$d->name}++;
                 next;
             }
             my $res = {
-                dist => $d,
+                dist => $d->name,
             };
             if ($level < $maxlevel-1 || $maxlevel == -1) {
-                $res->{rev_deps} = [$do_list->($d, $level+1)];
+                $res->{rev_deps} = [$do_list->($d->name, $level+1)];
             }
             if ($raw) {
                 push @res, $res;
@@ -156,7 +145,7 @@ my $_sahv_dpath = []; my $_w_res = undef; for (sort keys %args) { if (!/\A(-?)\w
                     if ($ENV{LOG_API_RESPONSE}) { $log->tracef("API result: %s", $res) }
                     $res;
                 });
-            $dist = $modinfo->{distribution};
+            $dist = $modinfo->distribution;
         }
         push @res, $do_list->($dist);
     }
@@ -164,7 +153,7 @@ my $_sahv_dpath = []; my $_w_res = undef; for (sort keys %args) { if (!/\A(-?)\w
 
     [200, @errs ? "Unsatisfiable dependencies" : "OK", $res,
      {"cmdline.exit_code" => @errs ? 200:0}];
-};      unless (ref($_w_res) eq "ARRAY" && $_w_res->[0]) { return [500, 'BUG: Sub App::ListRevDeps::list_rev_deps does not produce envelope']; } return $_w_res; }
+}
 
 1;
 #ABSTRACT: List reverse dependencies of a Perl module
@@ -181,7 +170,7 @@ App::ListRevDeps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-version 0.07
+This document describes version 0.08 of App::ListRevDeps (from Perl distribution App-ListRevDeps), released on 2014-05-27.
 
 =head1 SYNOPSIS
 
@@ -227,7 +216,14 @@ Return raw result.
 
 Return value:
 
-Returns an enveloped result (an array). First element (status) is an integer containing HTTP status code (200 means OK, 4xx caller error, 5xx function error). Second element (msg) is a string containing error message, or 'OK' if status is 200. Third element (result) is optional, the actual result. Fourth element (meta) is called result metadata and is optional, a hash that contains extra information.
+Returns an enveloped result (an array).
+
+First element (status) is an integer containing HTTP status code
+(200 means OK, 4xx caller error, 5xx function error). Second element
+(msg) is a string containing error message, or 'OK' if status is
+200. Third element (result) is optional, the actual result. Fourth
+element (meta) is called result metadata and is optional, a hash
+that contains extra information.
 
 =head1 ENVIRONMENT
 
