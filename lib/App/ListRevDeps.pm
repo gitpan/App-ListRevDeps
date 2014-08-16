@@ -10,7 +10,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(list_prereqs);
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 $SPEC{list_rev_deps} = {
     v => 1.1,
@@ -58,7 +58,7 @@ sub list_rev_deps {
     my %args = @_;
 
     my $mod = $args{module};
-    my $maxlevel = $args{level};
+    my $maxlevel = $args{level} // 9999;
     #$maxlevel = -1 if $args{recursive};
     my $do_cache = $args{cache};
     my $raw = $args{raw};
@@ -170,7 +170,7 @@ App::ListRevDeps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-This document describes version 0.08 of App::ListRevDeps (from Perl distribution App-ListRevDeps), released on 2014-05-27.
+This document describes version 0.09 of App::ListRevDeps (from Perl distribution App-ListRevDeps), released on 2014-08-16.
 
 =head1 SYNOPSIS
 
@@ -224,6 +224,8 @@ First element (status) is an integer containing HTTP status code
 200. Third element (result) is optional, the actual result. Fourth
 element (meta) is called result metadata and is optional, a hash
 that contains extra information.
+
+ (any)
 
 =head1 ENVIRONMENT
 

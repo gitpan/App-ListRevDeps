@@ -2,8 +2,8 @@ NAME
     App::ListRevDeps - List reverse dependencies of a Perl module
 
 VERSION
-    This document describes version 0.08 of App::ListRevDeps (from Perl
-    distribution App-ListRevDeps), released on 2014-05-27.
+    This document describes version 0.09 of App::ListRevDeps (from Perl
+    distribution App-ListRevDeps), released on 2014-08-16.
 
 SYNOPSIS
      # Use via list-rev-deps CLI script
@@ -48,6 +48,8 @@ FUNCTIONS
     element (result) is optional, the actual result. Fourth element (meta)
     is called result metadata and is optional, a hash that contains extra
     information.
+
+     (any)
 
 ENVIRONMENT
     *   LOG_API_RESPONSE (bool)
