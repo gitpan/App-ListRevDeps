@@ -10,7 +10,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(list_prereqs);
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 $SPEC{list_rev_deps} = {
     v => 1.1,
@@ -72,7 +72,6 @@ sub list_rev_deps {
 
     my $mcpan = MetaCPAN::Client->new;
 
-    my $cp = "list_rev_deps"; # cache prefix
     my $ce = "24h"; # cache expire period
 
     my @errs;
@@ -96,21 +95,23 @@ sub list_rev_deps {
         # list dists which depends on $dist. XXX we should switch to using the
         # API function instead, see CPAN::ReverseDependencies.
         my $depdists = $chi->compute(
-            "$cp-dist-$dist", $ce, sub {
+            "metacpan-dist-$dist", $ce, sub {
                 $log->infof("Querying MetaCPAN for dist %s ...", $dist);
                 my $res = $mcpan->rev_deps($dist);
                 if ($ENV{LOG_API_RESPONSE}) { $log->tracef("API result: %s", $res) }
                 $res;
             });
 
-        for my $d (sort @$depdists) {
-            if ($exclude_re && $d->name =~ $exclude_re) {
-                $log->infof("Excluded dist %s", $d->name)
-                    unless $excluded{$d->name}++;
+        #use DD; dd $depdists;
+        for my $d (@{ $depdists->{items} }) {
+            my $d_name = $d->{_source}{distribution};
+            if ($exclude_re && $d_name =~ $exclude_re) {
+                $log->infof("Excluded dist %s", $d_name)
+                    unless $excluded{$d_name}++;
                 next;
             }
             my $res = {
-                dist => $d->name,
+                dist => $d_name,
             };
             if ($level < $maxlevel-1 || $maxlevel == -1) {
                 $res->{rev_deps} = [$do_list->($d->name, $level+1)];
@@ -139,7 +140,7 @@ sub list_rev_deps {
             $dist = $_;
         } else {
             my $modinfo = $chi->compute(
-                "$cp-mod-$_", $ce, sub {
+                "metacpan-mod-$_", $ce, sub {
                     $log->infof("Querying MetaCPAN for module %s ...", $_);
                     my $res = $mcpan->module($_);
                     if ($ENV{LOG_API_RESPONSE}) { $log->tracef("API result: %s", $res) }
@@ -170,7 +171,7 @@ App::ListRevDeps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-This document describes version 0.09 of App::ListRevDeps (from Perl distribution App-ListRevDeps), released on 2014-08-16.
+This document describes version 0.10 of App::ListRevDeps (from Perl distribution App-ListRevDeps), released on 2014-09-04.
 
 =head1 SYNOPSIS
 
@@ -245,7 +246,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/App-ListRe
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-App-ListRevDeps>.
+Source repository is at L<https://github.com/perlancar/perl-App-ListRevDeps>.
 
 =head1 BUGS
 
@@ -257,11 +258,11 @@ feature.
 
 =head1 AUTHOR
 
-Steven Haryanto <stevenharyanto@gmail.com>
+perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Steven Haryanto.
+This software is copyright (c) 2014 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
