@@ -4,7 +4,7 @@
 # and generated automatically using Dist::Zilla::Plugin::Rinci::ScriptFromFunc version 0.01
 
 our $DATE = '2014-09-04'; # DATE
-our $VERSION = '0.10'; # VERSION
+our $VERSION = '0.11'; # VERSION
 
 use 5.010001;
 use strict;
@@ -31,7 +31,7 @@ list-rev-deps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-This document describes version 0.10 of list-rev-deps (from Perl distribution App-ListRevDeps), released on 2014-09-04.
+This document describes version 0.11 of list-rev-deps (from Perl distribution App-ListRevDeps), released on 2014-09-04.
 
 =head1 SYNOPSIS
 

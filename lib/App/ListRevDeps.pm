@@ -10,7 +10,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(list_prereqs);
 
-our $VERSION = '0.10'; # VERSION
+our $VERSION = '0.11'; # VERSION
 
 $SPEC{list_rev_deps} = {
     v => 1.1,
@@ -95,7 +95,7 @@ sub list_rev_deps {
         # list dists which depends on $dist. XXX we should switch to using the
         # API function instead, see CPAN::ReverseDependencies.
         my $depdists = $chi->compute(
-            "metacpan-dist-$dist", $ce, sub {
+            "metacpan-dist_rev_deps-$dist", $ce, sub {
                 $log->infof("Querying MetaCPAN for dist %s ...", $dist);
                 my $res = $mcpan->rev_deps($dist);
                 if ($ENV{LOG_API_RESPONSE}) { $log->tracef("API result: %s", $res) }
@@ -171,7 +171,7 @@ App::ListRevDeps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-This document describes version 0.10 of App::ListRevDeps (from Perl distribution App-ListRevDeps), released on 2014-09-04.
+This document describes version 0.11 of App::ListRevDeps (from Perl distribution App-ListRevDeps), released on 2014-09-04.
 
 =head1 SYNOPSIS
 

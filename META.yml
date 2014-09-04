@@ -19,7 +19,7 @@ name: App-ListRevDeps
 requires:
   CHI: '0.50'
   Log::Any: '0'
-  MetaCPAN::Client: '0'
+  MetaCPAN::Client: '1.007000'
   Perinci::CmdLine::Any: '0'
   Rinci: v1.1.0
   experimental: '0'
@@ -28,7 +28,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=App-ListRevDeps
   homepage: https://metacpan.org/release/App-ListRevDeps
   repository: git://github.com/perlancar/perl-App-ListRevDeps.git
-version: '0.10'
+version: '0.11'
 x_Dist_Zilla:
   perl:
     version: '5.018002'

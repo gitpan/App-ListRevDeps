@@ -2,7 +2,7 @@ NAME
     App::ListRevDeps - List reverse dependencies of a Perl module
 
 VERSION
-    This document describes version 0.10 of App::ListRevDeps (from Perl
+    This document describes version 0.11 of App::ListRevDeps (from Perl
     distribution App-ListRevDeps), released on 2014-09-04.
 
 SYNOPSIS

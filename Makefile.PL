@@ -24,7 +24,7 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "CHI" => "0.50",
     "Log::Any" => 0,
-    "MetaCPAN::Client" => 0,
+    "MetaCPAN::Client" => "1.007000",
     "Perinci::CmdLine::Any" => 0,
     "Rinci" => "v1.1.0",
     "experimental" => 0
@@ -35,7 +35,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.10",
+  "VERSION" => "0.11",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -48,7 +48,7 @@ my %FallbackPrereqs = (
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
   "Log::Any" => 0,
-  "MetaCPAN::Client" => 0,
+  "MetaCPAN::Client" => "1.007000",
   "Perinci::CmdLine::Any" => 0,
   "Rinci" => "v1.1.0",
   "Test::More" => 0,
