@@ -10,7 +10,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(list_prereqs);
 
-our $VERSION = '0.11'; # VERSION
+our $VERSION = '0.12'; # VERSION
 
 $SPEC{list_rev_deps} = {
     v => 1.1,
@@ -114,7 +114,7 @@ sub list_rev_deps {
                 dist => $d_name,
             };
             if ($level < $maxlevel-1 || $maxlevel == -1) {
-                $res->{rev_deps} = [$do_list->($d->name, $level+1)];
+                $res->{rev_deps} = [$do_list->($d_name, $level+1)];
             }
             if ($raw) {
                 push @res, $res;
@@ -171,7 +171,7 @@ App::ListRevDeps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-This document describes version 0.11 of App::ListRevDeps (from Perl distribution App-ListRevDeps), released on 2014-09-04.
+This document describes version 0.12 of App::ListRevDeps (from Perl distribution App-ListRevDeps), released on 2014-09-16.
 
 =head1 SYNOPSIS
 

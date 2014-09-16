@@ -28,7 +28,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=App-ListRevDeps
   homepage: https://metacpan.org/release/App-ListRevDeps
   repository: git://github.com/perlancar/perl-App-ListRevDeps.git
-version: '0.11'
+version: '0.12'
 x_Dist_Zilla:
   perl:
     version: '5.018002'
@@ -225,7 +225,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Rinci::Validate
       name: '@Author::PERLANCAR/Rinci::Validate'
-      version: '0.14'
+      version: '0.18'
     -
       class: Dist::Zilla::Plugin::SetScriptShebang
       name: '@Author::PERLANCAR/SetScriptShebang'

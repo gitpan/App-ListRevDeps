@@ -3,8 +3,8 @@
 # Note: This script is a CLI interface to Riap function /App/ListRevDeps/list_rev_deps
 # and generated automatically using Dist::Zilla::Plugin::Rinci::ScriptFromFunc version 0.01
 
-our $DATE = '2014-09-04'; # DATE
-our $VERSION = '0.11'; # VERSION
+our $DATE = '2014-09-16'; # DATE
+our $VERSION = '0.12'; # VERSION
 
 use 5.010001;
 use strict;
@@ -31,7 +31,7 @@ list-rev-deps - List reverse dependencies of a Perl module
 
 =head1 VERSION
 
-This document describes version 0.11 of list-rev-deps (from Perl distribution App-ListRevDeps), released on 2014-09-04.
+This document describes version 0.12 of list-rev-deps (from Perl distribution App-ListRevDeps), released on 2014-09-16.
 
 =head1 SYNOPSIS
 
